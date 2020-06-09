@@ -1,0 +1,9 @@
+.vs
+bin
+obj
+Properties
+z*
+
+*.htm
+*.nupkg
+Directory.Build.props

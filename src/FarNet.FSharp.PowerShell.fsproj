@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <FarHome Condition="'$(FarHome)' == ''">C:\Bin\Far\x64</FarHome>
+    <MyOutDir>$(FarHome)\FarNet\Lib\$(AssemblyName)</MyOutDir>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
+    <DisableImplicitSystemValueTupleReference>true</DisableImplicitSystemValueTupleReference>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net45</TargetFramework>
+    <RunPostBuildEvent>1</RunPostBuildEvent>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FSharp.Core">
+      <HintPath>$(FarHome)\FSharp.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="PS.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Management.Automation">
+      <HintPath>$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\WindowsPowerShell\3.0\System.Management.Automation.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <ItemGroup>
+      <MyBinFiles Include="$(OutDir)\*" Exclude="$(OutDir)\FSharp.Core.*" />
+    </ItemGroup>
+    <Copy DestinationFolder="$(MyOutDir)" SourceFiles="@(MyBinFiles)" SkipUnchangedFiles="true" />
+    <Exec Command="ib Post" />
+  </Target>
+</Project>
