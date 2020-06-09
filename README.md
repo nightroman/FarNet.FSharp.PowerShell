@@ -5,7 +5,7 @@
 # FarNet.FSharp.PowerShell
 
 F# friendly PowerShell extension \
-(net45 and Windows PowerShell 2+)
+(net45 and Windows PowerShell)
 
 ## Package
 

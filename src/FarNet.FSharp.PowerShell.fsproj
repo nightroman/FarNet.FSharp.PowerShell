@@ -23,14 +23,11 @@
     <Compile Include="PS.fs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Management.Automation">
-      <HintPath>$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\WindowsPowerShell\3.0\System.Management.Automation.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
+    <PackageReference Include="Microsoft.PowerShell.3.ReferenceAssemblies" Version="1.0.0" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <ItemGroup>
-      <MyBinFiles Include="$(OutDir)\*" Exclude="$(OutDir)\FSharp.Core.*" />
+      <MyBinFiles Include="$(OutDir)\FarNet.FSharp.PowerShell.*" Exclude="$(OutDir)\*.pdb" />
     </ItemGroup>
     <Copy DestinationFolder="$(MyOutDir)" SourceFiles="@(MyBinFiles)" SkipUnchangedFiles="true" />
     <Exec Command="ib Post" />

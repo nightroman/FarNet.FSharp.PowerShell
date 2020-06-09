@@ -125,8 +125,11 @@ https://raw.githubusercontent.com/nightroman/FarNet/master/Install-FarNet.en.txt
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<summary>$text</summary>
 		<description>$text</description>
-		<releaseNotes>https://raw.githubusercontent.com/nightroman/$ModuleName/master/Release-Notes.md</releaseNotes>
+		<releaseNotes>https://github.com/nightroman/FarNet.FSharp.PowerShell/blob/master/Release-Notes.md</releaseNotes>
 		<tags>FSharp PowerShell FarManager FarNet FSharpFar</tags>
+		<dependencies>
+			<dependency id="Microsoft.PowerShell.3.ReferenceAssemblies" version="1.0.0" />
+		</dependencies>
 	</metadata>
 </package>
 "@
