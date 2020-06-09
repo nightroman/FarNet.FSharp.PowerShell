@@ -10,8 +10,10 @@ F# friendly PowerShell extension \
 ## Package
 
 The NuGet package [FarNet.FSharp.PowerShell][NuGet] may be used as usual in F# projects.
+Note, *System.Management.Automation.dll* is not needed in your final binaries.
+It is just for building.
 
-The package is also designed for *FarNet.FSharpFar*.
+The package is also designed for [FarNet.FSharpFar](https://github.com/nightroman/FarNet/tree/master/FSharpFar).
 To install FarNet packages, follow [these steps](https://raw.githubusercontent.com/nightroman/FarNet/master/Install-FarNet.en.txt).
 
 ## Overview
