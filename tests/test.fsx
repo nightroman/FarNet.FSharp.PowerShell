@@ -4,18 +4,8 @@ let ps = PS.Create()
 
 match Array.last fsi.CommandLineArgs with
 
-| "missingCommand1" ->
+| "missingCommand" ->
     ps.Script("missing").Invoke() |> ignore
-
-| "missingCommand2" ->
-    try
-        ps.Script("missing").Invoke() |> ignore
-    with exn ->
-        printfn "%s" exn.Message
-
-| "convert" ->
-    ps.Script("1; 3.14; '42'; ''; $null").Invoke2<int>()
-    |> printfn "%A"
 
 | x ->
     failwithf "Missing test '%s'." x

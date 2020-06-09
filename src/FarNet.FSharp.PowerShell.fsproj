@@ -1,31 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <FarHome Condition="'$(FarHome)' == ''">C:\Bin\Far\x64</FarHome>
-    <MyOutDir>$(FarHome)\FarNet\Lib\$(AssemblyName)</MyOutDir>
-  </PropertyGroup>
-  <PropertyGroup>
-    <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
-    <DisableImplicitSystemValueTupleReference>true</DisableImplicitSystemValueTupleReference>
-  </PropertyGroup>
-  <PropertyGroup>
     <TargetFramework>net45</TargetFramework>
     <RunPostBuildEvent>1</RunPostBuildEvent>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FSharp.Core">
-      <HintPath>$(FarHome)\FSharp.Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="PS.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.PowerShell.3.ReferenceAssemblies" Version="1.0.0" />
   </ItemGroup>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(FarDevHome)' != ''">
+    <PropertyGroup>
+      <MyOutDir>$(FarDevHome)\FarNet\Lib\$(AssemblyName)</MyOutDir>
+    </PropertyGroup>
     <ItemGroup>
       <MyBinFiles Include="$(OutDir)\FarNet.FSharp.PowerShell.*" Exclude="$(OutDir)\*.pdb" />
     </ItemGroup>

@@ -27,7 +27,7 @@ $ErrorActionPreference = 'Stop'
 $PS = $args[0]
 function Get-Type([Parameter()]$Name) {
     trap {$PSCmdlet.ThrowTerminatingError($_)}
-    $PS.GetType($Name)
+    $PS.FindType($Name)
 }
 """
 
@@ -40,24 +40,26 @@ let private exnWithInfo (exn: RuntimeException) =
 /// F# friendly wrapper of System.Management.Automation.PowerShell.
 /// The usage and members are similar.
 [<Sealed>]
-type PS private () as this =
-    let caller = Assembly.GetCallingAssembly()
-    let types = lazy (caller.GetTypes())
-    let ps = PowerShell.Create()
-    do
-        ps.AddScript(scriptInit).AddArgument(this).Invoke() |> ignore
-
+type PS private (ps, types) as this =
     interface IDisposable with
         member _.Dispose() =
             ps.Dispose()
 
     /// Creates a new wrapped PowerShell instance.
     static member Create() =
-        new PS()
+        let caller = Assembly.GetCallingAssembly()
+        let types = lazy (caller.GetTypes())
+
+        let ps = PowerShell.Create()
+        let this = new PS(ps, types)
+
+        ps.AddScript(scriptInit).AddArgument(this).Invoke() |> ignore
+        this
 
     /// INTERNAL.
-    member _.GetType(name) =
-        match types.Value |> Array.tryFindBack (fun x -> x.Name = name) with
+    member _.FindType(name) =
+        let types = types.Value
+        match  types |> Array.tryFindBack (fun x -> x.Name = name) with
         | Some ty ->
             ty
         | None ->

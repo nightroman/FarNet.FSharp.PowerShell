@@ -26,7 +26,7 @@ Use `PS.Create()` instead of `PowerShell.Create()`.
 
 Use `Script()` and `Command()` instead of `AddScript` and `AddCommand()`.
 `PS` does not directly support command chains. But it is fine to invoke
-several scripts and commands one after another using same `PS` object.
+several scripts and commands using the same `PS` object.
 
 Use the type safe helper `Invoke2()` in addition to `Invoke()`.
 All result objects must be compatible with the specified type.
@@ -58,12 +58,10 @@ For more examples see [/samples].
 
 ## Notes
 
-Features and API may change without notice before v1.0.
+Features and API may change before v1.0.
 
-Right now the project is not suitable for cloning and hacking.
-It is originally developed strictly for Far Manager with FSharpFar.
-So the project file and build tools assume the special environment.
+The project is suitable for cloning and playing with Visual Studio 2019.
+*FarNet.FSharp.PowerShell.sln* contains the main project and tests.
 
-But it turns out that the package is a generic F# library.
-It makes sense to turn the project into generic as well.
-FarNet stuff will be on top of it and optional.
+*FarNet.FSharpFar* development, tools, and tests are optional.
+They require Far Manager in `C:\Bin\Far\x64` and use of the build script.

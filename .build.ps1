@@ -4,26 +4,26 @@
 #>
 
 param(
-	$FarHome = (property FarHome 'C:\Bin\Far\x64')
+	$Configuration = (property Configuration Release)
 )
 
 Set-StrictMode -Version 2
 $ModuleName = 'FarNet.FSharp.PowerShell'
+$env:FarDevHome = $FarDevHome = if (Test-Path 'C:\Bin\Far\x64') {'C:\Bin\Far\x64'} else {''}
 
 # Synopsis: Remove temp files.
 task Clean {
-	remove src\bin, src\obj, README.htm, *.nupkg, z
+	remove *\bin, *\obj, README.htm, *.nupkg, z
 }
 
 # Synopsis: Build and Post (post build target).
 task Build {
-	Set-Location src
-	exec {dotnet build -c Release}
+	exec {dotnet build -c $Configuration}
 }
 
 # Synopsis: Post build target. Copy stuff.
-task Post {
-	$to = "$FarHome\FarNet\Lib\$ModuleName"
+task Post -If:$FarDevHome {
+	$to = "$FarDevHome\FarNet\Lib\$ModuleName"
 	Copy-Item "src\$ModuleName.ini" $to
 }
 
@@ -67,10 +67,10 @@ task Meta -Inputs .build.ps1, Release-Notes.md -Outputs src/Directory.Build.prop
 }
 
 # Synopsis: Collect package files.
-task Package Markdown, {
+task Package -If:$FarDevHome Markdown, {
 	$toLib = "z\lib\net45"
 	$toModule = "z\tools\FarHome\FarNet\Lib\$ModuleName"
-	$fromModule = "$FarHome\FarNet\Lib\$ModuleName"
+	$fromModule = "$FarDevHome\FarNet\Lib\$ModuleName"
 
 	remove z
 	$null = mkdir $toModule
@@ -91,9 +91,9 @@ task Package Markdown, {
 }
 
 # Synopsis: Make NuGet package.
-task NuGet Package, Version, {
+task NuGet -If:$FarDevHome Package, Version, {
 	# test versions
-	$dllPath = "$FarHome\FarNet\Lib\$ModuleName\$ModuleName.dll"
+	$dllPath = "$FarDevHome\FarNet\Lib\$ModuleName\$ModuleName.dll"
 	($dllVersion = (Get-Item $dllPath).VersionInfo.FileVersion.ToString())
 	assert $dllVersion.StartsWith("$Version.") 'Versions mismatch.'
 
@@ -137,9 +137,18 @@ https://raw.githubusercontent.com/nightroman/FarNet/master/Install-FarNet.en.txt
 	exec { NuGet pack z\Package.nuspec -NoPackageAnalysis }
 }
 
-# Synopsis: Tests.
-task Test {
+# Synopsis: xUnit.
+task Test1 {
+	Set-Location tests
+	exec { dotnet test --blame --no-restore --no-build -c $Configuration -r $env:TEMP }
+}
+
+# Synopsis: fsx.
+task Test2 -If:$FarDevHome {
 	Invoke-Build ** tests
 }
+
+# Synopsis: All tests.
+task Test Test1, Test2
 
 task . Build, Test, Clean

@@ -3,7 +3,7 @@
 open FarNet.FSharp.PowerShell
 open System.Diagnostics
 
-let jobSeconds = 2
+let jobSeconds = 1
 
 // make two ready to run jobs
 let ps1 = PS.Create().Script("Start-Sleep $args[0]; 1").AddArgument(jobSeconds)
