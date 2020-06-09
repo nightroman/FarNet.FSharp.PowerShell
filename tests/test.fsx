@@ -13,5 +13,9 @@ match Array.last fsi.CommandLineArgs with
     with exn ->
         printfn "%s" exn.Message
 
+| "convert" ->
+    ps.Script("1; 3.14; '42'; ''; $null").Invoke2<int>()
+    |> printfn "%A"
+
 | x ->
     failwithf "Missing test '%s'." x

@@ -1,6 +1,7 @@
 module FarNet.FSharp.PowerShell
 open System
 open System.Collections
+open System.Collections.Generic
 open System.Management.Automation
 open System.Reflection
 
@@ -40,7 +41,8 @@ let private exnWithInfo (exn: RuntimeException) =
 /// The usage and members are similar.
 [<Sealed>]
 type PS private () as this =
-    let types = Assembly.GetCallingAssembly().GetTypes()
+    let caller = Assembly.GetCallingAssembly()
+    let types = lazy (caller.GetTypes())
     let ps = PowerShell.Create()
     do
         ps.AddScript(scriptInit).AddArgument(this).Invoke() |> ignore
@@ -54,8 +56,8 @@ type PS private () as this =
         new PS()
 
     /// INTERNAL.
-    member __.GetType(name) =
-        match types |> Array.tryFindBack (fun x -> x.Name = name) with
+    member _.GetType(name) =
+        match types.Value |> Array.tryFindBack (fun x -> x.Name = name) with
         | Some ty ->
             ty
         | None ->
@@ -101,14 +103,13 @@ type PS private () as this =
         | :? RuntimeException as exn ->
             exn |> exnWithInfo |> raise
 
-    /// Invokes the current command and returns a typed array.
+    /// Invokes the current command and returns a typed array
+    /// converted by PowerShell LanguagePrimitives.Convert().
     member _.Invoke2<'t>() : 't[] =
         ps.Streams.ClearStreams()
         try
             let source = ps.Invoke()
-            Array.init source.Count (fun i ->
-                source.[i].BaseObject :?> 't
-            )
+            PS.Convert<'t>(source)
         with
         | :? RuntimeException as exn ->
             exn |> exnWithInfo |> raise
@@ -125,18 +126,31 @@ type PS private () as this =
             return exn |> exnWithInfo |> raise
     }
 
-    /// Creates the current command async expression returning a typed array.
-    member _.InvokeAsync2() = async {
+    /// Creates the current command async expression returning a typed array
+    /// converted by PowerShell LanguagePrimitives.Convert().
+    member _.InvokeAsync2<'t>() = async {
         ps.Streams.ClearStreams()
         try
             let asyncResult = ps.BeginInvoke()
             let! _ok = Async.AwaitIAsyncResult(asyncResult)
             let source = ps.EndInvoke asyncResult
-            return
-                Array.init source.Count (fun i ->
-                    source.[i].BaseObject :?> 't
-                )
+            return PS.Convert<'t>(source)
         with
         | :? RuntimeException as exn ->
             return exn |> exnWithInfo |> raise
     }
+
+    static member private Convert<'t>(source: IList<PSObject>) : 't[] =
+        let res = Array.zeroCreate source.Count
+        for i in 0 .. res.Length - 1 do
+            let x = source.[i]
+            res.[i] <-
+                if isNull x then
+                    LanguagePrimitives.ConvertTo<'t>(null)
+                else
+                    match x.BaseObject with
+                    | :? 't as x ->
+                        x
+                    | _ ->
+                        LanguagePrimitives.ConvertTo<'t>(x)
+        res
