@@ -73,8 +73,8 @@ task Package -If:$FarDevHome Markdown, {
 	$fromModule = "$FarDevHome\FarNet\Lib\$ModuleName"
 
 	remove z
-	$null = mkdir $toModule
 	$null = mkdir $toLib
+	$null = mkdir $toModule
 
 	Copy-Item -Destination $toLib @(
 		"$fromModule\FarNet.FSharp.PowerShell.dll"
@@ -128,13 +128,15 @@ https://raw.githubusercontent.com/nightroman/FarNet/master/Install-FarNet.en.txt
 		<releaseNotes>https://github.com/nightroman/FarNet.FSharp.PowerShell/blob/master/Release-Notes.md</releaseNotes>
 		<tags>FSharp PowerShell FarManager FarNet FSharpFar</tags>
 		<dependencies>
-			<dependency id="Microsoft.PowerShell.3.ReferenceAssemblies" version="1.0.0" />
+			<group targetFramework=".NETFramework4.5">
+				<dependency id="Microsoft.PowerShell.3.ReferenceAssemblies" version="1.0.0" />
+			</group>
 		</dependencies>
 	</metadata>
 </package>
 "@
 	# pack
-	exec { NuGet pack z\Package.nuspec -NoPackageAnalysis }
+	exec { NuGet.exe pack z\Package.nuspec }
 }
 
 # Synopsis: xUnit.

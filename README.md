@@ -60,8 +60,12 @@ For more examples see [/samples].
 
 Features and API may change before v1.0.
 
-The project is suitable for cloning and playing with Visual Studio 2019.
+The project is suitable for cloning and playing with Visual Studio 2019. \
 *FarNet.FSharp.PowerShell.sln* contains the main project and tests.
 
-*FarNet.FSharpFar* development, tools, and tests are optional.
-They require Far Manager in `C:\Bin\Far\x64` and use of the build script.
+*FSharpFar* development and tools are optional.
+They require:
+
+- *Far Manager* in `C:\Bin\Far\x64`
+- FarNet module *FarNet.FSharpFar*
+- *Invoke-Build* with *.build.ps1*

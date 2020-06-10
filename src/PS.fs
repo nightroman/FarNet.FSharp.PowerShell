@@ -1,3 +1,7 @@
+
+// FarNet.FSharp.PowerShell
+// Copyright (c) Roman Kuzmin
+
 module FarNet.FSharp.PowerShell
 open System
 open System.Collections

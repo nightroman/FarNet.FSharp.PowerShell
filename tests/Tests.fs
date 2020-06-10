@@ -110,6 +110,17 @@ module Types =
 
         Assert.True({TypesRecord2.Name = "May"; Age = 11} = res)
 
+    // Get-Type is needed on calling from F# scripts because type names contain unknown parts.
+    // But on calling from F# assembly scripts may use types explicitly with their full names.
+    [<Fact>]
+    let ``3 explicit type`` () =
+        use ps = PS.Create()
+        let res =
+            ps.Script(""" [Tests+Types+TypesRecord1]::new('May', 11) """).Invoke2()
+            |> Array.exactlyOne
+
+        Assert.True({TypesRecord1.Name = "May"; Age = 11} = res)
+
 module Streams =
     [<Fact>]
     let ``1 Warning, Verbose`` () =

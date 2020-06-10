@@ -1,5 +1,10 @@
 # FarNet.FSharp.PowerShell Release Notes
 
+## v0.0.5
+
+- Add framework info to the package.
+- Add a direct type use test.
+
 ## v0.0.4
 
 - Amend getting F# types from PS scripts.
