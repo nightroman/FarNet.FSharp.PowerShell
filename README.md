@@ -26,7 +26,7 @@ Use `PS.Create()` instead of `PowerShell.Create()`.
 
 Use `Script()` and `Command()` instead of `AddScript` and `AddCommand()`.
 `PS` does not directly support command chains. But it is fine to invoke
-several scripts and commands using the same `PS` object.
+several scripts and commands using the same `PS` session.
 
 Use the type safe helper `Invoke2()` in addition to `Invoke()`.
 All result objects must be compatible with the specified type.
@@ -41,7 +41,7 @@ Note, it also works for `Hashtable` wrapped by `PSObject`.
 
 The default `$ErrorActionPreference` is `Stop`, safe for non-interactive.
 
-Use `Get-Type` to get a type defined in the calling F# assembly.
+Use `Get-Type` to get a type defined in the calling F# assembly or script.
 
 ## Example
 
