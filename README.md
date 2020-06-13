@@ -10,28 +10,28 @@ F# friendly PowerShell extension \
 
 ## Package
 
-The NuGet package [FarNet.FSharp.PowerShell][NuGet] may be used as usual in F# projects.
+The NuGet package [FarNet.FSharp.PowerShell][NuGet] may be used as usual in F# projects. \
 Note, *System.Management.Automation.dll* is not needed in your final binaries.
-It is just for building.
 
-The package is also designed for [FarNet.FSharpFar](https://github.com/nightroman/FarNet/tree/master/FSharpFar).
+The package is also designed for [FarNet.FSharpFar](https://github.com/nightroman/FarNet/tree/master/FSharpFar). \
 To install FarNet packages, follow [these steps](https://raw.githubusercontent.com/nightroman/FarNet/master/Install-FarNet.en.txt).
 
 ## Overview
 
 **F# code**
 
-`PS` is the F# friendly wrapper of the [PowerShell] class, with similar but fewer members.
+The `PS` type wraps the [PowerShell] class and exposes somewhat similar members.
+
 Use `PS.Create()` instead of `PowerShell.Create()`.
 
 Use `Script()` and `Command()` instead of `AddScript` and `AddCommand()`.
 `PS` does not directly support command chains. But it is fine to invoke
-several scripts and commands using the same `PS` session.
+several scripts and commands using the same `PS` instance.
 
-Use the type safe helper `Invoke2()` in addition to `Invoke()`.
-All result objects must be compatible with the specified type.
+Use the type safe generic `InvokeAs()` in addition to `Invoke()`.
+Result objects must be compatible with the specified type.
 
-Use F# asynchronous `InvokeAsync()` and `InvokeAsync2()`.
+Use F# asynchronous `InvokeAsync()` and `InvokeAsyncAs()`.
 For parallel scenarios use different `PS` instances.
 
 Use the operator `?` for getting `PSObject` properties.
@@ -60,7 +60,7 @@ For more examples see [/samples].
 
 Features and API may change before v1.0.
 
-The project is suitable for cloning and playing with Visual Studio 2019. \
+The project is suitable for cloning and playing with Visual Studio. \
 *FarNet.FSharp.PowerShell.sln* contains the main project and tests.
 
 *FSharpFar* development and tools are optional.

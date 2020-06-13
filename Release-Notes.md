@@ -1,5 +1,11 @@
 # FarNet.FSharp.PowerShell Release Notes
 
+## v0.1.0
+
+- Added `Invoke()` and `InvokeAs()` overloads with input.
+- Renamed `Invoke2` to `InvokeAs`.
+- Renamed `InvokeAsync2` to `InvokeAsyncAs`.
+
 ## v0.0.5
 
 - Add framework info to the package.

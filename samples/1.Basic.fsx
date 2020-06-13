@@ -30,9 +30,9 @@ ps.Command("Get-ChildItem")
     .Invoke()
 |> Seq.iter (fun x -> printfn "Name = %O; Length = %O" x?Name x?Length)
 
-// Command with Invoke2 ~> <Type>, typed properties as x.Name
+// Command with InvokeAs ~> <Type>, typed properties as x.Name
 ps.Command("Get-ChildItem")
     .AddParameter("LiteralPath", __SOURCE_DIRECTORY__)
     .AddParameter("File", true)
-    .Invoke2<FileInfo>()
-|> Array.iter (fun x -> printfn "Name = %s; Length = %i" x.Name x.Length)
+    .InvokeAs<FileInfo>()
+|> Seq.iter (fun x -> printfn "Name = %s; Length = %i" x.Name x.Length)

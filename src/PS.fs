@@ -95,12 +95,12 @@ type PS private (ps, types) as this =
             ps.AddArgument(v) |> ignore
         this
 
-    /// Adds the parameter name and value to current command.
+    /// Adds the specified parameter to the current command.
     member _.AddParameter(name, value) =
         ps.AddParameter(name, value) |> ignore
         this
 
-    /// Invokes the current command and returns a PSObject collection.
+    /// Invokes the current command and returns Collection<PSObject>.
     member _.Invoke() =
         ps.Streams.ClearStreams()
         try
@@ -109,18 +109,34 @@ type PS private (ps, types) as this =
         | :? RuntimeException as exn ->
             exn |> exnWithInfo |> raise
 
-    /// Invokes the current command and returns a typed array
-    /// converted by PowerShell LanguagePrimitives.Convert().
-    member _.Invoke2<'t>() : 't[] =
+    /// Invokes the current command and returns Collection<T>.
+    member _.InvokeAs<'t>() =
         ps.Streams.ClearStreams()
         try
-            let source = ps.Invoke()
-            PS.Convert<'t>(source)
+            ps.Invoke<'t>()
         with
         | :? RuntimeException as exn ->
             exn |> exnWithInfo |> raise
 
-    /// Creates the current command async expression returning a PSObject collection.
+    /// Invokes the current command with input and returns Collection<PSObject>.
+    member _.Invoke(input) =
+        ps.Streams.ClearStreams()
+        try
+            ps.Invoke(input)
+        with
+        | :? RuntimeException as exn ->
+            exn |> exnWithInfo |> raise
+
+    /// Invokes the current command with input and returns Collection<T>.
+    member _.InvokeAs<'t>(input) =
+        ps.Streams.ClearStreams()
+        try
+            ps.Invoke<'t>(input)
+        with
+        | :? RuntimeException as exn ->
+            exn |> exnWithInfo |> raise
+
+    /// Creates the current command async expression returning PSDataCollection<PSObject>.
     member _.InvokeAsync() = async {
         ps.Streams.ClearStreams()
         try
@@ -132,9 +148,8 @@ type PS private (ps, types) as this =
             return exn |> exnWithInfo |> raise
     }
 
-    /// Creates the current command async expression returning a typed array
-    /// converted by PowerShell LanguagePrimitives.Convert().
-    member _.InvokeAsync2<'t>() = async {
+    /// Creates the current command async expression returning T[].
+    member _.InvokeAsyncAs<'t>() = async {
         ps.Streams.ClearStreams()
         try
             let asyncResult = ps.BeginInvoke()

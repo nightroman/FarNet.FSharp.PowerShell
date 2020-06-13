@@ -5,17 +5,72 @@ open System
 open System.IO
 open System.Diagnostics
 
+// Invoke: objects as they are, except $null ~ null.
 [<Fact>]
-let Invoke2_convert () =
+let Invoke () =
     use ps = PS.Create()
-    let res = ps.Script("1; 3.14; '42'; ''; $null").Invoke2<int>()
-    Assert.True([| 1; 3; 42; 0; 0 |] = res)
+    let res = ps.Script("1; 3.14; '42'; ''; $null").Invoke()
+    Assert.Equal(5, res.Count)
+    Assert.Equal(1, res.[0].BaseObject :?> int)
+    Assert.Equal(3.14, res.[1].BaseObject :?> float)
+    Assert.Equal("42", res.[2].BaseObject :?> string)
+    Assert.Equal("", res.[3].BaseObject :?> string)
+    Assert.Equal(null, res.[4])
+
+// InvokeAs: objects are converted to T in the PS way.
+// Note, InvokeAs does not always require explicit <T>.
+[<Fact>]
+let InvokeAs () =
+    use ps = PS.Create()
+    let res = ps.Script("1; 3.14; '42'; ''; $null").InvokeAs()
+    Assert.Equal(5, res.Count)
+    Assert.Equal(1, res.[0])
+    Assert.Equal(3, res.[1])
+    Assert.Equal(42, res.[2])
+    Assert.Equal(0, res.[3])
+    Assert.Equal(0, res.[4])
+
+// Same as Invoke but async.
+[<Fact>]
+let InvokeAsync () = async {
+    use ps = PS.Create()
+    let! res = ps.Script("1; 3.14; '42'; ''; $null").InvokeAsync()
+    Assert.Equal(5, res.Count)
+    Assert.Equal(1, res.[0].BaseObject :?> int)
+    Assert.Equal(3.14, res.[1].BaseObject :?> float)
+    Assert.Equal("42", res.[2].BaseObject :?> string)
+    Assert.Equal("", res.[3].BaseObject :?> string)
+    Assert.Equal(null, res.[4])
+}
+
+// Same as InvokeAs but async.
+[<Fact>]
+let InvokeAsyncAs () = async {
+    use ps = PS.Create()
+    let! res = ps.Script("1; 3.14; '42'; ''; $null").InvokeAsyncAs()
+    Assert.Equal(5, res.Length)
+    Assert.Equal(1, res.[0])
+    Assert.Equal(3, res.[1])
+    Assert.Equal(42, res.[2])
+    Assert.Equal(0, res.[3])
+    Assert.Equal(0, res.[4])
+}
 
 [<Fact>]
-let InvokeAsync2_convert () = async {
+let invoke_with_input () = async {
     use ps = PS.Create()
-    let! res = ps.Script("1; 3.14; '42'; ''; $null").InvokeAsync2<int>()
-    Assert.True([| 1; 3; 42; 0; 0 |] = res)
+
+    let res = ps.Script("process{$_ * 2}").Invoke([1..3])
+    Assert.Equal(3, res.Count)
+    Assert.Equal(2, res.[0].BaseObject :?> int)
+    Assert.Equal(4, res.[1].BaseObject :?> int)
+    Assert.Equal(6, res.[2].BaseObject :?> int)
+
+    let res = ps.Script("process{$_ * 2}").InvokeAs([1..3])
+    Assert.Equal(3, res.Count)
+    Assert.Equal(2, res.[0])
+    Assert.Equal(4, res.[1])
+    Assert.Equal(6, res.[2])
 }
 
 [<Fact>]
@@ -55,7 +110,7 @@ module Basic =
 
     // It is fine to run the same command many times.
     [<Fact>]
-    let ``Command Invoke Invoke2`` () =
+    let ``Command Invoke InvokeAs`` () =
         let command =
             ps.Command("Get-ChildItem")
                 .AddParameter("LiteralPath", __SOURCE_DIRECTORY__)
@@ -69,8 +124,8 @@ module Basic =
             Assert.IsType(typeof<int64>, x?Length)
         )
 
-        let res = command.Invoke2<FileInfo>()
-        Assert.True(res.Length > 2)
+        let res = command.InvokeAs<FileInfo>()
+        Assert.True(res.Count > 2)
         res
         |> Seq.iter (fun x ->
             Assert.IsType(typeof<string>, x.Name)
@@ -87,8 +142,8 @@ module Types =
             ps.Script("""
             $type = Get-Type TypesRecord1
             $type::new('Joe', 42)
-            """).Invoke2()
-            |> Array.exactlyOne
+            """).InvokeAs()
+            |> Seq.exactlyOne
 
         Assert.True({TypesRecord1.Name = "Joe"; Age = 42} = res)
 
@@ -105,8 +160,8 @@ module Types =
             $x.Name = 'May'
             $x.Age = 11
             $x
-            """).Invoke2()
-            |> Array.exactlyOne
+            """).InvokeAs()
+            |> Seq.exactlyOne
 
         Assert.True({TypesRecord2.Name = "May"; Age = 11} = res)
 
@@ -116,8 +171,8 @@ module Types =
     let ``3 explicit type`` () =
         use ps = PS.Create()
         let res =
-            ps.Script(""" [Tests+Types+TypesRecord1]::new('May', 11) """).Invoke2()
-            |> Array.exactlyOne
+            ps.Script(""" [Tests+Types+TypesRecord1]::new('May', 11) """).InvokeAs()
+            |> Seq.exactlyOne
 
         Assert.True({TypesRecord1.Name = "May"; Age = 11} = res)
 
@@ -196,9 +251,9 @@ module InvokeAsync =
         // run two jobs sequentially, it takes ~ 2 * jobSeconds
         let time = Stopwatch.StartNew()
         // do 1 here
-        let r1 = ps1.Invoke2<int>()
+        let r1 = ps1.InvokeAs<int>()
         // do 2 here
-        let r2 = ps2.Invoke2<int>()
+        let r2 = ps2.InvokeAs<int>()
 
         Assert.Equal(1, Assert.Single(r1))
         Assert.Equal(2, Assert.Single(r2))
@@ -209,9 +264,9 @@ module InvokeAsync =
         let r1, r2 =
             async {
                 // do 1 in parallel
-                let! complete1 = ps1.InvokeAsync2<int>() |> Async.StartChild
+                let! complete1 = ps1.InvokeAsyncAs<int>() |> Async.StartChild
                 // do 2 here
-                let r2 = ps2.Invoke2<int>()
+                let r2 = ps2.InvokeAs<int>()
                 // complete job 1
                 let! r1 = complete1
                 // results
