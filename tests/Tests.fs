@@ -277,3 +277,37 @@ module InvokeAsync =
         Assert.Equal(1, Assert.Single(r1))
         Assert.Equal(2, Assert.Single(r2))
         Assert.True(time.Elapsed.TotalSeconds < 2.0 * jobSeconds)
+
+module Input =
+    [<Fact>]
+    let ``1 script`` () =
+        use ps = PS.Create()
+
+        let script = """
+        param($Factor)
+        process {
+            $_ * $Factor
+        }
+        """
+
+        let res =
+            [1..4]
+            |> ps.Script(script).AddArgument(3.14).InvokeAs
+            |> Seq.toArray
+
+        Assert.True([| 3.14; 6.28; 9.42; 12.56 |] = res)
+
+    [<Fact>]
+    let ``2 command`` () =
+        use ps = PS.Create()
+
+        let res =
+            [
+                __SOURCE_DIRECTORY__
+                __SOURCE_DIRECTORY__ + "/" + __SOURCE_FILE__
+            ]
+            |> ps.Command("Get-Item").InvokeAs<FileSystemInfo>
+
+        Assert.Equal(2, res.Count)
+        Assert.Equal("tests", res.[0].Name)
+        Assert.Equal("Tests.fs", res.[1].Name)

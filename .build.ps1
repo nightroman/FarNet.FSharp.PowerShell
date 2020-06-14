@@ -68,13 +68,10 @@ task Meta -Inputs .build.ps1, Release-Notes.md -Outputs src/Directory.Build.prop
 
 # Synopsis: Collect package files.
 task Package -If:$FarDevHome Markdown, {
-	$toLib = "z\lib\net45"
-	$toModule = "z\tools\FarHome\FarNet\Lib\$ModuleName"
-	$fromModule = "$FarDevHome\FarNet\Lib\$ModuleName"
-
 	remove z
-	$null = mkdir $toLib
-	$null = mkdir $toModule
+	$toLib = mkdir "z\lib\net45"
+	$toModule = mkdir "z\tools\FarHome\FarNet\Lib\$ModuleName"
+	$fromModule = "$FarDevHome\FarNet\Lib\$ModuleName"
 
 	Copy-Item -Destination $toLib @(
 		"$fromModule\FarNet.FSharp.PowerShell.dll"
