@@ -138,8 +138,10 @@ https://github.com/nightroman/FarNet#readme
 
 # Synopsis: xUnit.
 task test1 {
-	Set-Location tests
-	exec { dotnet test --blame --no-restore --no-build -c $Configuration -r $env:TEMP }
+	Push-Location tests
+	exec { dotnet test -c $Configuration }
+	Pop-Location
+	remove tests\bin, tests\obj
 }
 
 # Synopsis: fsx.
