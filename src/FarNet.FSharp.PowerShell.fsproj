@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <FarHome Condition="'$(FarHome)' == ''">C:\Bin\Far\x64</FarHome>
+    <TargetFramework>net6.0</TargetFramework>
     <RunPostBuildEvent>1</RunPostBuildEvent>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -9,19 +10,9 @@
     <Compile Include="PS.fs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Management.Automation">
-      <HintPath>$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\WindowsPowerShell\3.0\System.Management.Automation.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
+    <PackageReference Include="PowerShellStandard.Library" Version="5.1.1" />
   </ItemGroup>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(FarDevHome)' != ''">
-    <PropertyGroup>
-      <MyOutDir>$(FarDevHome)\FarNet\Lib\$(AssemblyName)</MyOutDir>
-    </PropertyGroup>
-    <ItemGroup>
-      <MyBinFiles Include="$(OutDir)\FarNet.FSharp.PowerShell.*" Exclude="$(OutDir)\*.pdb" />
-    </ItemGroup>
-    <Copy DestinationFolder="$(MyOutDir)" SourceFiles="@(MyBinFiles)" SkipUnchangedFiles="true" />
-    <Exec Command="ib Post" />
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="ib publish -Configuration $(Configuration) -FarHome $(FarHome)" />
   </Target>
 </Project>

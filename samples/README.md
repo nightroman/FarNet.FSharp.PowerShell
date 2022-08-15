@@ -1,9 +1,6 @@
-Scripts in this directory are ready to run by `FarNet.FSharpFar` or its `fsx.exe`.
-The configuration file [.fs.ini](.fs.ini) provides the required references.
+# FarNet.FSharp.PowerShell code samples
 
-For running by `fsi.exe` scripts need manually added `#r` directives like
+Scripts in this directory are run by `FarNet.FSharpFar` or `fsx`.
+The configuration file [.fs.ini](.fs.ini) provides the references.
 
-```fsharp
-#r "System.Management.Automation"
-#r @"C:\Bin\Far\x64\FarNet\Lib\FarNet.FSharp.PowerShell\FarNet.FSharp.PowerShell.dll"
-```
+But the code samples are valid for other applications using `FarNet.FSharp.PowerShell`.

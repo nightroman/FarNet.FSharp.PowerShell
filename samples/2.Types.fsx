@@ -28,3 +28,23 @@ $x.Age = 11
 $x
 """).Invoke()
 |> printfn "%A"
+
+// Or pass types in PS once and avoid search by Get-Type:
+
+ps.Script("$Record1 = $args[0]; $Record2 = $args[1]")
+    .AddArgument(typeof<Record1>)
+    .AddArgument(typeof<Record2>)
+    .Invoke()
+
+ps.Script("""
+$Record1::new('Jonh', 22)
+""").Invoke()
+|> printfn "%A"
+
+ps.Script("""
+$x = $Record2::new()
+$x.Name = 'Mary'
+$x.Age = 33
+$x
+""").Invoke()
+|> printfn "%A"

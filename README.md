@@ -1,20 +1,33 @@
 [NuGet]: https://www.nuget.org/packages/FarNet.FSharp.PowerShell
 [GitHub]: https://github.com/nightroman/FarNet.FSharp.PowerShell
-[/samples]: https://github.com/nightroman/FarNet.FSharp.PowerShell/tree/master/samples
-[PowerShell]: https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.powershell?view=powershellsdk-1.1.0
+[FarNet.FSharpFar]: https://github.com/nightroman/FarNet/tree/master/FSharpFar#readme
+[FarNet.PowerShellFar]: https://github.com/nightroman/FarNet/tree/master/PowerShellFar#readme
+[PowerShell]: https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.powershell?view=powershellsdk-7.0.0
 
 # FarNet.FSharp.PowerShell
 
-F# friendly PowerShell extension \
-(net45 and Windows PowerShell)
+F# friendly PowerShell Core helper
 
-## Package
+## Package (two in one)
 
-The NuGet package [FarNet.FSharp.PowerShell][NuGet] may be used as usual in F# projects. \
-Note, *System.Management.Automation.dll* is not needed in your final binaries.
+(1)
+The NuGet package [FarNet.FSharp.PowerShell][NuGet] may be used as usual in F# projects.
+In this case PowerShell Core comes with its dependency `Microsoft.PowerShell.SDK`
+(batteries included because Windows PowerShell cannot be used).
 
-The package is also designed for [FarNet.FSharpFar](https://github.com/nightroman/FarNet/tree/master/FSharpFar). \
+(2)
+The package is also used by [FarNet.FSharpFar] in Far Manager and its satellite `fsx.exe`.
+In this case PowerShell Core comes with another package [FarNet.PowerShellFar].
 To install FarNet packages, follow [these steps](https://github.com/nightroman/FarNet#readme).
+Thus, you need these packages in Far Manager:
+
+1. `FarNet` - Far Manager .NET host and API for modules
+2. `FarNet.FSharpFar` - F# compiler service host and tools
+3. `FarNet.PowerShellFar` - PowerShell Core, host and tools
+4. `FarNet.FSharp.PowerShell` - this package connects 2. and 3. in 1.
+
+It looks like a lot but includes all the batteries and the power plant.
+This setup is portable with Far Manager, with caveats about prerequisites.
 
 ## Overview
 
@@ -54,18 +67,7 @@ PS.Create().Script("Write-Output 'Hello, world!'").Invoke()
 |> printfn "%A"
 ```
 
-For more examples see [/samples].
+## See also
 
-## Notes
-
-Features and API may change before v1.0.
-
-The project is suitable for cloning and playing with Visual Studio. \
-*FarNet.FSharp.PowerShell.sln* contains the main project and tests.
-
-*FSharpFar* development and tools are optional.
-They require:
-
-- *Far Manager* in `C:\Bin\Far\x64`
-- FarNet module *FarNet.FSharpFar*
-- *Invoke-Build* with *.build.ps1*
+- [Samples](https://github.com/nightroman/FarNet.FSharp.PowerShell/tree/main/samples)
+- [Release Notes](https://github.com/nightroman/FarNet.FSharp.PowerShell/blob/main/Release-Notes.md)
