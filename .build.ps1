@@ -18,11 +18,12 @@ task build meta, {
 }
 
 task publish {
+	$null = mkdir $ModuleRoot -Force
 	Set-Location src
 	Copy-Item -Destination $ModuleRoot @(
 		"$ModuleName.ini"
-		"bin\$Configuration\net6.0\$ModuleName.dll"
-		"bin\$Configuration\net6.0\$ModuleName.xml"
+		"bin\$Configuration\net7.0\$ModuleName.dll"
+		"bin\$Configuration\net7.0\$ModuleName.xml"
 	)
 }
 
@@ -64,7 +65,7 @@ task markdown {
 # Synopsis: Collect package files.
 task package markdown, {
 	remove z
-	$toLib = mkdir "z\lib\net6.0"
+	$toLib = mkdir "z\lib\net7.0"
 	$toModule = mkdir "z\tools\FarHome\FarNet\Lib\$ModuleName"
 
 	Copy-Item -Destination $toLib @(
@@ -115,8 +116,8 @@ https://github.com/nightroman/FarNet#readme
 		<releaseNotes>https://github.com/nightroman/FarNet.FSharp.PowerShell/blob/main/Release-Notes.md</releaseNotes>
 		<tags>FSharp PowerShell FarManager FarNet FSharpFar</tags>
 		<dependencies>
-			<group targetFramework="net6.0">
-				<dependency id="Microsoft.PowerShell.SDK" version="7.2.6" />
+			<group targetFramework="net7.0">
+				<dependency id="Microsoft.PowerShell.SDK" version="7.3.0" />
 			</group>
 		</dependencies>
 	</metadata>

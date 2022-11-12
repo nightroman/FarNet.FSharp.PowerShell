@@ -1,6 +1,12 @@
 # FarNet.FSharp.PowerShell Release Notes
 
-<!--Mind Microsoft.PowerShell.SDK 7.2.6 in build script.-->
+<!--Mind Microsoft.PowerShell.SDK 7.3.0 in build script.-->
+
+## v1.0.0
+
+Requires .NET 7, uses PowerShell Core 7.3.0.
+
+In Far Manager requires FSharpFar 3.0.0 and PowerShellFar 7.0.0.
 
 ## v0.2.0
 
