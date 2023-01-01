@@ -2,6 +2,10 @@
 
 <!--Mind Microsoft.PowerShell.SDK 7.3.0 in build script.-->
 
+## v1.0.1
+
+Maintenance.
+
 ## v1.0.0
 
 Requires .NET 7, uses PowerShell Core 7.3.0.

@@ -11,7 +11,7 @@ param(
 Set-StrictMode -Version 3
 $ModuleName = 'FarNet.FSharp.PowerShell'
 $ModuleRoot = "$FarHome\FarNet\Lib\$ModuleName"
-$Description = 'F# friendly PowerShell Core helper'
+$Description = 'F# friendly PowerShell Core helper.'
 
 task build meta, {
 	exec { dotnet build -c $Configuration }
@@ -33,6 +33,7 @@ task clean {
 
 task version {
 	($script:Version = switch -Regex -File Release-Notes.md {'##\s+v(\d+\.\d+\.\d+)' {$Matches[1]; break}})
+	assert $script:Version
 }
 
 task meta -Inputs .build.ps1, Release-Notes.md -Outputs src/Directory.Build.props -Jobs version, {
@@ -68,6 +69,10 @@ task package markdown, {
 	$toLib = mkdir "z\lib\net7.0"
 	$toModule = mkdir "z\tools\FarHome\FarNet\Lib\$ModuleName"
 
+	Copy-Item -Destination z @(
+		'README.md'
+	)
+
 	Copy-Item -Destination $toLib @(
 		"$ModuleRoot\FarNet.FSharp.PowerShell.dll"
 		"$ModuleRoot\FarNet.FSharp.PowerShell.xml"
@@ -84,23 +89,9 @@ task package markdown, {
 
 # Synopsis: Make NuGet package.
 task nuget package, version, {
-	# test versions
 	$dllPath = "$FarHome\FarNet\Lib\$ModuleName\$ModuleName.dll"
 	($dllVersion = (Get-Item $dllPath).VersionInfo.FileVersion.ToString())
 	assert $dllVersion.StartsWith("$Version.") 'Versions mismatch.'
-
-	$Description = @"
-$Description
-
----
-
-The package is designed for FarNet.FSharpFar and requires FarNet.PowerShellFar.
-To install FarNet packages, follow these steps:
-
-https://github.com/nightroman/FarNet#readme
-
----
-"@
 
 	Set-Content z\Package.nuspec @"
 <?xml version="1.0"?>
@@ -110,8 +101,9 @@ https://github.com/nightroman/FarNet#readme
 		<version>$Version</version>
 		<authors>Roman Kuzmin</authors>
 		<owners>Roman Kuzmin</owners>
-		<projectUrl>https://github.com/nightroman/$ModuleName</projectUrl>
 		<license type="expression">Apache-2.0</license>
+		<readme>README.md</readme>
+		<projectUrl>https://github.com/nightroman/$ModuleName</projectUrl>
 		<description>$Description</description>
 		<releaseNotes>https://github.com/nightroman/FarNet.FSharp.PowerShell/blob/main/Release-Notes.md</releaseNotes>
 		<tags>FSharp PowerShell FarManager FarNet FSharpFar</tags>
