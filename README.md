@@ -2,7 +2,7 @@
 [GitHub]: https://github.com/nightroman/FarNet.FSharp.PowerShell
 [FarNet.FSharpFar]: https://github.com/nightroman/FarNet/tree/main/FSharpFar#readme
 [FarNet.PowerShellFar]: https://github.com/nightroman/FarNet/tree/main/PowerShellFar#readme
-[PowerShell]: https://docs.microsoft.com/en-us/dotnet/api/system.management.automation.powershell?view=powershellsdk-7.0.0
+[PowerShell]: https://learn.microsoft.com/en-us/dotnet/api/system.management.automation.powershell?view=powershellsdk-7.4.0
 
 # FarNet.FSharp.PowerShell
 
