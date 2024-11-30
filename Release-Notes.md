@@ -2,6 +2,12 @@
 
 <!--Mind Microsoft.PowerShell.SDK {version} in build script.-->
 
+## v3.0.0
+
+Requires .NET 9, uses PowerShell Core 7.5.0-rc.1
+
+In Far Manager requires latest FSharpFar and PowerShellFar.
+
 ## v2.0.0
 
 Requires .NET 8, uses PowerShell Core 7.4.0

@@ -9,6 +9,7 @@ param(
 )
 
 Set-StrictMode -Version 3
+$TargetFramework = 'net9.0'
 $ModuleName = 'FarNet.FSharp.PowerShell'
 $ModuleRoot = "$FarHome\FarNet\Lib\$ModuleName"
 $Description = 'F# friendly PowerShell Core helper.'
@@ -22,8 +23,8 @@ task publish {
 	Set-Location src
 	Copy-Item -Destination $ModuleRoot @(
 		"$ModuleName.ini"
-		"bin\$Configuration\net8.0\$ModuleName.dll"
-		"bin\$Configuration\net8.0\$ModuleName.xml"
+		"bin\$Configuration\$TargetFramework\$ModuleName.dll"
+		"bin\$Configuration\$TargetFramework\$ModuleName.xml"
 	)
 }
 
@@ -68,7 +69,7 @@ task markdown {
 # Synopsis: Collect package files.
 task package markdown, {
 	remove z
-	$toLib = mkdir "z\lib\net8.0"
+	$toLib = mkdir "z\lib\$TargetFramework"
 	$toModule = mkdir "z\tools\FarHome\FarNet\Lib\$ModuleName"
 
 	Copy-Item -Destination z @(
@@ -110,8 +111,8 @@ task nuget package, version, {
 		<releaseNotes>https://github.com/nightroman/FarNet.FSharp.PowerShell/blob/main/Release-Notes.md</releaseNotes>
 		<tags>FSharp PowerShell FarManager FarNet FSharpFar</tags>
 		<dependencies>
-			<group targetFramework="net8.0">
-				<dependency id="Microsoft.PowerShell.SDK" version="7.4.0" />
+			<group targetFramework="$TargetFramework">
+				<dependency id="Microsoft.PowerShell.SDK" version="7.5.0-rc.1" />
 			</group>
 		</dependencies>
 	</metadata>
