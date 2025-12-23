@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/FarNet.FSharp.PowerShell.fsproj" />
+  <Project Path="tests/Tests.fsproj" />
+</Solution>

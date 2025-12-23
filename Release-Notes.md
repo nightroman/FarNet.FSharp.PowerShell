@@ -2,6 +2,10 @@
 
 <!--Mind Microsoft.PowerShell.SDK {version} in build script.-->
 
+## v3.1.0
+
+.NET 10, Microsoft.PowerShell.SDK 7.5.4
+
 ## v3.0.0
 
 Requires .NET 9, uses PowerShell Core 7.5.0-rc.1
